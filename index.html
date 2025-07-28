@@ -74,15 +74,14 @@
       }
 
       .dropdown-menu,
-      .generate-menu {
+      .generate-menu,
+      .picker_wrapper {
         display: none;
         position: absolute;
-        bottom: 100%;
-        margin-bottom: 6px;
         left: 0;
         background: white;
         border: 1px solid #ccc;
-        z-index: 10;
+        z-index: 20;
         border-radius: 8px;
         box-shadow: -1px 1px 9px rgba(0, 0, 0, 0.2);
       }
@@ -140,29 +139,25 @@
         gap: 6px;
       }
 
-      .picker_wrapper {
-        position: absolute !important;
-        top: auto !important;
-        bottom: 100% !important;
-        left: 0 !important;
-        transform: translateX(6%) !important; /* смещаем вправо */
-        margin-bottom: 8px;
-        border-radius: 8px !important;
-        box-shadow: none !important;
-        background: white !important;
-        border: 1px solid #ccc !important;
-        z-index: 20;
-      }
-
       .picker_arrow {
         display: none !important;
       }
 
+      /* ===== Мобильные: окна сверху ===== */
       @media (max-width: 600px) {
         .toolbar {
           left: 5px;
           margin-right: 5px;
           width: auto;
+        }
+
+        .dropdown-menu,
+        .generate-menu,
+        .picker_wrapper {
+          bottom: 100% !important;
+          top: auto !important;
+          margin-bottom: 8px !important;
+          margin-top: 0 !important;
         }
 
         .align-group {
@@ -179,11 +174,31 @@
         .txt-redact {
           display: none;
         }
+
+        .picker_wrapper {
+          left: 0 !important;
+          transform: translateX(-30%) !important;
+        }
       }
 
+      /* ===== Десктоп: окна снизу ===== */
       @media (min-width: 601px) {
+        .dropdown-menu,
+        .generate-menu,
+        .picker_wrapper {
+          top: 100% !important;
+          bottom: auto !important;
+          margin-top: 6px !important;
+          margin-bottom: 0 !important;
+        }
+
         .align-dropdown {
           display: none;
+        }
+
+        .picker_wrapper {
+          left: 0 !important;
+          transform: translateX(6%) !important;
         }
       }
 
@@ -195,20 +210,6 @@
         .generate-menu {
           width: 177px;
           left: -80px;
-        }
-
-        .picker_wrapper {
-          position: absolute !important;
-          top: auto !important;
-          bottom: 100% !important;
-          left: 0 !important; /* смещение влево от иконки */
-          transform: translateX(-30%) !important; /* сместить палитру левее */
-          margin-bottom: 8px;
-          border-radius: 8px !important;
-          box-shadow: none !important;
-          background: white !important;
-          border: 1px solid #ccc !important;
-          z-index: 20;
         }
       }
     </style>
@@ -492,16 +493,13 @@
         picker.show()
       })
 
-      // Убираем стрелку и задаем стиль при открытии палитры
       picker.onOpen = () => {
-        const arrow = document.querySelector('.picker_arrow')
-        if (arrow) arrow.style.display = 'none'
         const wrapper = document.querySelector('.picker_wrapper')
         if (wrapper) {
-          wrapper.style.borderRadius = '8px'
           wrapper.style.background = 'white'
-          wrapper.style.boxShadow = 'none'
           wrapper.style.border = '1px solid #ccc'
+          wrapper.style.borderRadius = '8px'
+          wrapper.style.boxShadow = '-1px 1px 9px rgba(0, 0, 0, 0.2)'
         }
       }
     </script>
