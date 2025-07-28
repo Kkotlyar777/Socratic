@@ -15,8 +15,9 @@
       }
 
       .toolbar {
+        position: relative;
+        top: 350px;
         left: 50px;
-        top: 50px;
         width: 620px;
         background: white;
         display: flex;
@@ -27,7 +28,6 @@
         border-radius: 8px;
         box-shadow: -1px 1px 9px rgba(0, 0, 0, 0.2);
         box-sizing: border-box;
-        position: relative;
       }
 
       .toolbar button {
@@ -59,7 +59,7 @@
       }
 
       .color-icon {
-        position: relative; /* Важно для корректного позиционирования палитры */
+        position: relative;
         width: 20px;
         height: 20px;
         border-radius: 4px;
@@ -73,29 +73,17 @@
         height: 32px;
       }
 
-      .dropdown-menu {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        background: white;
-        border: 1px solid #ccc;
-        z-index: 10;
-        width: 50px;
-        border-radius: 6px;
-        box-shadow: -1px 1px 9px rgba(0, 0, 0, 0.2);
-      }
-
+      .dropdown-menu,
       .generate-menu {
         display: none;
         position: absolute;
-        top: 100%;
+        bottom: 100%;
+        margin-bottom: 6px;
         left: 0;
         background: white;
         border: 1px solid #ccc;
         z-index: 10;
-        width: 217px;
-        border-radius: 6px;
+        border-radius: 8px;
         box-shadow: -1px 1px 9px rgba(0, 0, 0, 0.2);
       }
 
@@ -108,8 +96,8 @@
 
       .dropdown-menu div:hover,
       .generate-menu div:hover {
-        background: #cafafa;
-        color: rgb(10, 96, 194);
+        background: #ebf1fd;
+        color: #3e74cb;
       }
 
       .align-group {
@@ -133,16 +121,14 @@
       }
 
       .active {
-        background-color: #c1fbff !important;
+        background-color: #d3dffd !important;
       }
 
-      /* Обертка для групп с вертикальными разделителями */
       .group {
         display: flex;
         align-items: center;
       }
 
-      /* Вертикальный разделитель */
       .separator {
         border-right: 1px solid #ccc;
         margin: 0 8px;
@@ -154,14 +140,31 @@
         gap: 6px;
       }
 
-      /* Mobile */
+      .picker_wrapper {
+        position: absolute !important;
+        top: auto !important;
+        bottom: 100% !important;
+        left: 0 !important;
+        transform: translateX(6%) !important; /* смещаем вправо */
+        margin-bottom: 8px;
+        border-radius: 8px !important;
+        box-shadow: none !important;
+        background: white !important;
+        border: 1px solid #ccc !important;
+        z-index: 20;
+      }
+
+      .picker_arrow {
+        display: none !important;
+      }
+
       @media (max-width: 600px) {
         .toolbar {
           left: 5px;
-          top: 50px;
           margin-right: 5px;
           width: auto;
         }
+
         .align-group {
           display: none;
         }
@@ -170,15 +173,9 @@
           position: relative;
           display: inline-block;
         }
-        .mobile-hide {
-          display: none;
-        }
 
-        /* Скрываем жирный и курсив */
-        .toggle-btn {
-          display: none;
-        }
-
+        .mobile-hide,
+        .toggle-btn,
         .txt-redact {
           display: none;
         }
@@ -189,11 +186,35 @@
           display: none;
         }
       }
+
+      @media (max-width: 380px) {
+        .regeberation-txt {
+          display: none;
+        }
+
+        .generate-menu {
+          width: 177px;
+          left: -80px;
+        }
+
+        .picker_wrapper {
+          position: absolute !important;
+          top: auto !important;
+          bottom: 100% !important;
+          left: 0 !important; /* смещение влево от иконки */
+          transform: translateX(-30%) !important; /* сместить палитру левее */
+          margin-bottom: 8px;
+          border-radius: 8px !important;
+          box-shadow: none !important;
+          background: white !important;
+          border: 1px solid #ccc !important;
+          z-index: 20;
+        }
+      }
     </style>
   </head>
   <body>
     <div class="toolbar">
-      <!-- Группа кнопок + - -->
       <div class="group">
         <button onclick="changeFontSize(-1)">-</button>
         <div
@@ -205,7 +226,6 @@
         <button onclick="changeFontSize(1)">+</button>
       </div>
 
-      <!-- Кнопка палитры -->
       <div class="group">
         <div
           class="color-icon"
@@ -215,7 +235,6 @@
 
       <div class="separator"></div>
 
-      <!-- Кнопки жирный и курсив -->
       <div class="txt-redact">
         <button
           class="toggle-btn"
@@ -233,7 +252,6 @@
 
       <div class="separator mobile-hide"></div>
 
-      <!-- Кнопки выравнивания (desktop) -->
       <div class="align-group group">
         <button
           class="align-btn"
@@ -294,7 +312,6 @@
         </button>
       </div>
 
-      <!-- Align dropdown (mobile) -->
       <div class="dropdown align-dropdown">
         <button onclick="toggleDropdown(this)">☰</button>
         <div
@@ -357,9 +374,9 @@
           </div>
         </div>
       </div>
+
       <div class="separator"></div>
 
-      <!-- Generate dropdown -->
       <div class="generate-dropdown">
         <button onclick="toggleGenerate(this)">
           <svg
@@ -367,7 +384,6 @@
             height="24"
             viewBox="0 0 24 24"
             fill="none"
-            xmlns="http://www.w3.org/2000/svg"
           >
             <path
               d="M14 15L10 19L14 23"
@@ -392,7 +408,7 @@
               stroke-linecap="round"
             />
           </svg>
-          Перегенерировать текст
+          <span class="regeberation-txt">Перегенерировать текст</span>
         </button>
         <div
           class="generate-menu"
@@ -415,9 +431,7 @@
       </div>
     </div>
 
-    <!-- Vanilla Picker -->
     <script src="https://cdn.jsdelivr.net/npm/vanilla-picker@2.11.1/dist/vanilla-picker.min.js"></script>
-
     <script>
       const fontSizeDisplay = document.getElementById('fontSize')
 
@@ -426,7 +440,7 @@
         fontSizeDisplay.textContent = size < 1 ? 1 : size
       }
 
-      function toggleDropdown(button) {
+      function toggleDropdown() {
         const menu = document.getElementById('alignmentMenu')
         menu.style.display = menu.style.display === 'block' ? 'none' : 'block'
       }
@@ -435,7 +449,7 @@
         document.getElementById('alignmentMenu').style.display = 'none'
       }
 
-      function toggleGenerate(button) {
+      function toggleGenerate() {
         const menu = document.getElementById('generateMenu')
         menu.style.display = menu.style.display === 'block' ? 'none' : 'block'
       }
@@ -459,7 +473,6 @@
           document.getElementById('generateMenu').style.display = 'none'
         }
         if (!e.target.closest('#colorIcon')) {
-          // При клике вне палитры прячем pop-up
           picker.hide()
         }
       })
@@ -478,6 +491,19 @@
         e.stopPropagation()
         picker.show()
       })
+
+      // Убираем стрелку и задаем стиль при открытии палитры
+      picker.onOpen = () => {
+        const arrow = document.querySelector('.picker_arrow')
+        if (arrow) arrow.style.display = 'none'
+        const wrapper = document.querySelector('.picker_wrapper')
+        if (wrapper) {
+          wrapper.style.borderRadius = '8px'
+          wrapper.style.background = 'white'
+          wrapper.style.boxShadow = 'none'
+          wrapper.style.border = '1px solid #ccc'
+        }
+      }
     </script>
   </body>
 </html>
