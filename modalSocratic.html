@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <title>Меню</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      .toolbar {
+        left: 50px;
+        top: 50px;
+        width: 620px;
+        background: white;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        padding: 8px;
+        gap: 8px;
+        border-radius: 8px;
+        box-shadow: -1px 1px 9px rgba(0, 0, 0, 0.2);
+        box-sizing: border-box;
+        position: relative;
+      }
+
+      .toolbar button {
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: 16px;
+        padding: 6px;
+        border-radius: 6px;
+        transition: background-color 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .toolbar button:hover {
+        background-color: #f0f0f0;
+      }
+
+      .number-display {
+        width: 40px;
+        height: 30px;
+        background: #b8b8b8;
+        border-radius: 8px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .color-icon {
+        position: relative; /* Важно для корректного позиционирования палитры */
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        background: #000;
+        border: 1px solid #aaa;
+        cursor: pointer;
+      }
+
+      .toggle-btn {
+        width: 32px;
+        height: 32px;
+      }
+
+      .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: white;
+        border: 1px solid #ccc;
+        z-index: 10;
+        width: 50px;
+        border-radius: 6px;
+        box-shadow: -1px 1px 9px rgba(0, 0, 0, 0.2);
+      }
+
+      .generate-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: white;
+        border: 1px solid #ccc;
+        z-index: 10;
+        width: 217px;
+        border-radius: 6px;
+        box-shadow: -1px 1px 9px rgba(0, 0, 0, 0.2);
+      }
+
+      .dropdown-menu div,
+      .generate-menu div {
+        padding: 6px 12px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .dropdown-menu div:hover,
+      .generate-menu div:hover {
+        background: #cafafa;
+        color: rgb(10, 96, 194);
+      }
+
+      .align-group {
+        display: flex;
+        gap: 4px;
+      }
+
+      .align-btn {
+        cursor: pointer;
+        padding: 6px 8px;
+        border-radius: 4px;
+      }
+
+      .align-btn svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .generate-dropdown {
+        position: relative;
+      }
+
+      .active {
+        background-color: #c1fbff !important;
+      }
+
+      /* Обертка для групп с вертикальными разделителями */
+      .group {
+        display: flex;
+        align-items: center;
+      }
+
+      /* Вертикальный разделитель */
+      .separator {
+        border-right: 1px solid #ccc;
+        margin: 0 8px;
+        height: 24px;
+      }
+
+      .txt-redact {
+        display: flex;
+        gap: 6px;
+      }
+
+      /* Mobile */
+      @media (max-width: 600px) {
+        .toolbar {
+          left: 5px;
+          top: 50px;
+          margin-right: 5px;
+          width: auto;
+        }
+        .align-group {
+          display: none;
+        }
+
+        .align-dropdown {
+          position: relative;
+          display: inline-block;
+        }
+        .mobile-hide {
+          display: none;
+        }
+
+        /* Скрываем жирный и курсив */
+        .toggle-btn {
+          display: none;
+        }
+
+        .txt-redact {
+          display: none;
+        }
+      }
+
+      @media (min-width: 601px) {
+        .align-dropdown {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toolbar">
+      <!-- Группа кнопок + - -->
+      <div class="group">
+        <button onclick="changeFontSize(-1)">-</button>
+        <div
+          class="number-display"
+          id="fontSize"
+        >
+          29
+        </div>
+        <button onclick="changeFontSize(1)">+</button>
+      </div>
+
+      <!-- Кнопка палитры -->
+      <div class="group">
+        <div
+          class="color-icon"
+          id="colorIcon"
+        ></div>
+      </div>
+
+      <div class="separator"></div>
+
+      <!-- Кнопки жирный и курсив -->
+      <div class="txt-redact">
+        <button
+          class="toggle-btn"
+          onclick="toggleButton(this)"
+        >
+          <b>B</b>
+        </button>
+        <button
+          class="toggle-btn"
+          onclick="toggleButton(this)"
+        >
+          <i>I</i>
+        </button>
+      </div>
+
+      <div class="separator mobile-hide"></div>
+
+      <!-- Кнопки выравнивания (desktop) -->
+      <div class="align-group group">
+        <button
+          class="align-btn"
+          onclick="setExclusiveActive(this, 'align-btn')"
+          title="Слева"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            viewBox="0 0 24 24"
+          >
+            <path d="M15 12H3"></path>
+            <path d="M17 18H3"></path>
+            <path d="M21 6H3"></path>
+          </svg>
+        </button>
+        <button
+          class="align-btn"
+          onclick="setExclusiveActive(this, 'align-btn')"
+          title="По центру"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            viewBox="0 0 24 24"
+          >
+            <path d="M17 12H7"></path>
+            <path d="M19 18H5"></path>
+            <path d="M21 6H3"></path>
+          </svg>
+        </button>
+        <button
+          class="align-btn"
+          onclick="setExclusiveActive(this, 'align-btn')"
+          title="Справа"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            viewBox="0 0 24 24"
+          >
+            <path d="M21 12H9"></path>
+            <path d="M21 18H7"></path>
+            <path d="M21 6H3"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Align dropdown (mobile) -->
+      <div class="dropdown align-dropdown">
+        <button onclick="toggleDropdown(this)">☰</button>
+        <div
+          class="dropdown-menu"
+          id="alignmentMenu"
+        >
+          <div
+            class="align-btn"
+            onclick="setExclusiveActive(this, 'align-btn'); toggleDropdownClose()"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <path d="M15 12H3"></path>
+              <path d="M17 18H3"></path>
+              <path d="M21 6H3"></path>
+            </svg>
+          </div>
+          <div
+            class="align-btn"
+            onclick="setExclusiveActive(this, 'align-btn'); toggleDropdownClose()"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <path d="M17 12H7"></path>
+              <path d="M19 18H5"></path>
+              <path d="M21 6H3"></path>
+            </svg>
+          </div>
+          <div
+            class="align-btn"
+            onclick="setExclusiveActive(this, 'align-btn'); toggleDropdownClose()"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <path d="M21 12H9"></path>
+              <path d="M21 18H7"></path>
+              <path d="M21 6H3"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="separator"></div>
+
+      <!-- Generate dropdown -->
+      <div class="generate-dropdown">
+        <button onclick="toggleGenerate(this)">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M14 15L10 19L14 23"
+              stroke="#33363F"
+              stroke-width="2"
+            />
+            <path
+              d="M18.0622 8.5C18.6766 9.56413 19 10.7712 19 12C19 13.2288 18.6766 14.4359 18.0622 15.5C17.4478 16.5641 16.5641 17.4478 15.5 18.0622C14.4359 18.6766 13.2288 19 12 19"
+              stroke="#33363F"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path
+              d="M10 9L14 5L10 1"
+              stroke="#33363F"
+              stroke-width="2"
+            />
+            <path
+              d="M5.93782 15.5C5.32344 14.4359 5 13.2288 5 12C5 10.7712 5.32344 9.56413 5.93782 8.5C6.5522 7.43587 7.43587 6.5522 8.5 5.93782C9.56413 5.32344 10.7712 5 12 5"
+              stroke="#33363F"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+          Перегенерировать текст
+        </button>
+        <div
+          class="generate-menu"
+          id="generateMenu"
+        >
+          <div onclick="setExclusiveActive(this, 'generate-btn')">Красиво</div>
+          <div onclick="setExclusiveActive(this, 'generate-btn')">
+            Другими словами
+          </div>
+          <div onclick="setExclusiveActive(this, 'generate-btn')">Кратко</div>
+          <div onclick="setExclusiveActive(this, 'generate-btn')">Проще</div>
+          <div onclick="setExclusiveActive(this, 'generate-btn')">Сложнее</div>
+          <div onclick="setExclusiveActive(this, 'generate-btn')">
+            Более формально
+          </div>
+          <div onclick="setExclusiveActive(this, 'generate-btn')">
+            В разговорном стиле
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vanilla Picker -->
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-picker@2.11.1/dist/vanilla-picker.min.js"></script>
+
+    <script>
+      const fontSizeDisplay = document.getElementById('fontSize')
+
+      function changeFontSize(delta) {
+        let size = parseInt(fontSizeDisplay.textContent, 10) + delta
+        fontSizeDisplay.textContent = size < 1 ? 1 : size
+      }
+
+      function toggleDropdown(button) {
+        const menu = document.getElementById('alignmentMenu')
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block'
+      }
+
+      function toggleDropdownClose() {
+        document.getElementById('alignmentMenu').style.display = 'none'
+      }
+
+      function toggleGenerate(button) {
+        const menu = document.getElementById('generateMenu')
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block'
+      }
+
+      function toggleButton(button) {
+        button.classList.toggle('active')
+      }
+
+      function setExclusiveActive(item, targetClass) {
+        document
+          .querySelectorAll('.' + targetClass)
+          .forEach((btn) => btn.classList.remove('active'))
+        item.classList.add('active')
+      }
+
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.dropdown')) {
+          document.getElementById('alignmentMenu').style.display = 'none'
+        }
+        if (!e.target.closest('.generate-dropdown')) {
+          document.getElementById('generateMenu').style.display = 'none'
+        }
+        if (!e.target.closest('#colorIcon')) {
+          // При клике вне палитры прячем pop-up
+          picker.hide()
+        }
+      })
+
+      const colorIcon = document.getElementById('colorIcon')
+      const picker = new Picker({
+        parent: colorIcon,
+        popup: true,
+        color: '#000000',
+        onChange: (color) => {
+          colorIcon.style.backgroundColor = color.rgbaString
+        },
+      })
+
+      colorIcon.addEventListener('click', (e) => {
+        e.stopPropagation()
+        picker.show()
+      })
+    </script>
+  </body>
+</html>
